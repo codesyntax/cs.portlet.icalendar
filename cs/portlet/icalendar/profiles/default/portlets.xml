@@ -4,7 +4,7 @@
  <!-- Portlet type registrations -->
 
  <portlet
-   addview="cs.portlet.icalendarportlet.ICalendarPortlet"
+   addview="cs.portlet.icalendar.calendarportlet.ICalendarPortlet"
    title="ICalendar Portlet"
    description="A portlet to show a icalendar file events in a portlet"
    />

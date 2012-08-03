@@ -19,12 +19,12 @@
      <!-- Register the portlet -->
 
      <plone:portlet
-         name="cs.portlet.icalendar.ICalendarPortlet"
-         interface=".icalendarportlet.IICalendarPortlet"
-         assignment=".icalendarportlet.Assignment"         
-         renderer=".icalendarportlet.Renderer"
-         addview=".icalendarportlet.AddForm"
-         editview=".icalendarportlet.EditForm"
+         name="cs.portlet.icalendar.calendarportlet.ICalendarPortlet"
+         interface=".calendarportlet.IICalendarPortlet"
+         assignment=".calendarportlet.Assignment"         
+         renderer=".calendarportlet.Renderer"
+         addview=".calendarportlet.AddForm"
+         editview=".calendarportlet.EditForm"
          />
 
 </configure>
