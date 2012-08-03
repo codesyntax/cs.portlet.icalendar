@@ -20,7 +20,7 @@
                 2012-12-12
             </span>
             <span class="end"
-                    tal:condition="python:view.data.show_start and item.get('end', '')"
+                    tal:condition="python:view.data.end and item.get('end', '')"
                     tal:content="python:toLocalizedTime(item['end'])">
                 2012-12-12
             </span>

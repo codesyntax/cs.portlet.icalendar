@@ -9,7 +9,7 @@ from zope.formlib import form
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from cs.portlet.aemet import AEMETPortletMessageFactory as _
+from cs.portlet.icalendar import icalendarMessageFactory as _
 from plone.memoize.ram import cache
 
 import urllib2
@@ -32,23 +32,23 @@ same.
                           required=True,
                           )
 
-    limit = schema.Int(title=_('uNumber of items to show in the portlet.'),
-                       description=_('uIf you enter 0, all items will be shown'),
+    limit = schema.Int(title=_(u'Number of items to show in the portlet.'),
+                       description=_(u'If you enter 0, all items will be shown'),
                        default=0,
                        required=True
                        )
 
-    show_start = schema.Bool(title=_('uShow the start date of the event?'),
+    show_start = schema.Bool(title=_(u'Show the start date of the event?'),
                             required=False,
                             default=True,
                            )
 
-    show_end = schema.Bool(title=_('uShow the end date of the event?'),
+    show_end = schema.Bool(title=_(u'Show the end date of the event?'),
                            required=False,
                            default=True,
                            )
 
-    cache_time = schema.Bool(title=_(u'Cache of the ICS data in seconds'),
+    cache_time = schema.Int(title=_(u'Cache of the ICS data in seconds'),
                             required=True,
                             default=3600,
                             )
@@ -91,7 +91,7 @@ rendered, and the implicit variable 'view' will refer to an instance
 of this class. Other methods can be added and referenced in the template.
 """
 
-    render = ViewPageTemplateFile('icalendarportlet.pt')
+    render = ViewPageTemplateFile('calendarportlet.pt')
 
     def title(self):
         return self.data.portlet_title
@@ -105,19 +105,24 @@ of this class. Other methods can be added and referenced in the template.
             sock = urllib2.urlopen(self.data.url)
         except:
             return []
-        cal = Calendar(sock.read())
+        cal = Calendar.from_ical(sock.read())
         res = []
         for item in cal.walk():
             if item.name == 'VEVENT':
                 d = {}
-                d['text'] = safe_unicode(d.get('SUMMARY', ''))
-                d['start'] = dt2DT(d.get('DTSTART').dt, '')
-                d['end'] = dt2DT(d.get('DTEND').dt, '')
-                d['location'] = safe_unicode(d.get('LOCATION', ''))
-                d['subject'] = safe_unicode(d.get('CATEGORIES', ''))
+                d['text'] = safe_unicode(item.get('SUMMARY', ''))
+                start = item.get('DTSTART', None)
+                d['start'] = start and dt2DT(start.dt) or ''
+                end = item.get('DEND', None)
+                d['end'] = end and dt2DT(end.dt) or ''
+                d['location'] = safe_unicode(item.get('LOCATION', ''))
+                d['subject'] = safe_unicode(item.get('CATEGORIES', ''))
                 res.append(d)
 
-        return res
+        if not self.data.limit:
+            return res
+        else:
+            return res[:self.data.limit]
 
 class AddForm(base.AddForm):
     """Portlet add form.
