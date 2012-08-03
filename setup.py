@@ -14,10 +14,10 @@ setup(name='cs.portlet.icalendar',
         "Framework :: Plone",
         "Programming Language :: Python",
         ],
-      keywords='',
-      author='',
-      author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      keywords='plone portlet icalendar',
+      author='Mikel Larreategi',
+      author_email='mlarreategi@codesyntax.com',
+      url='http://github.com/codesyntax/cs.portlet.icalendar/',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['cs', 'cs.portlet'],
@@ -26,6 +26,7 @@ setup(name='cs.portlet.icalendar',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'icalendar',
       ],
       entry_points="""
       # -*- Entry points: -*-
@@ -33,4 +34,5 @@ setup(name='cs.portlet.icalendar',
       [z3c.autoinclude.plugin]
       target = plone
       """,
+      
       )

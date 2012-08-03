@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<portlets>
+
+ <!-- Portlet type registrations -->
+
+ <portlet
+   addview="cs.portlet.icalendarportlet.ICalendarPortlet"
+   title="ICalendar Portlet"
+   description="A portlet to show a icalendar file events in a portlet"
+   />
+
+</portlets>

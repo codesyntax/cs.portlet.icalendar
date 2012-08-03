@@ -1,8 +1,30 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:gs="http://namespaces.zope.org/genericsetup"
     i18n_domain="cs.portlet.icalendar">
 
-  <five:registerPackage package="." initialize=".initialize" />
+  <!-- -*- extra stuff goes here -*- -->
+    <!-- <i18n:registerTranslations directory="locales" />-->
+
+    <gs:registerProfile
+       name="default"
+       title="ICalendar portlet"
+       directory="profiles/default"
+       description="A portlet to show a icalendar file events in a portlet"
+       provides="Products.GenericSetup.interfaces.EXTENSION"
+       />
+
+     <!-- Register the portlet -->
+
+     <plone:portlet
+         name="cs.portlet.icalendar.ICalendarPortlet"
+         interface=".icalendarportlet.IICalendarPortlet"
+         assignment=".icalendarportlet.Assignment"         
+         renderer=".icalendarportlet.Renderer"
+         addview=".icalendarportlet.AddForm"
+         editview=".icalendarportlet.EditForm"
+         />
 
 </configure>

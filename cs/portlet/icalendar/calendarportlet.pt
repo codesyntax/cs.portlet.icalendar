@@ -1,0 +1,29 @@
+<dl class="portlet portletICalendar">
+
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        <span tal:replace="view/data/portlet_title" />
+        <span class="portletTopRight"></span>
+    </dt>
+
+
+    <tal:item repeat="item view/get_items"
+              define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
+        <dd tal:define="oddrow repeat/item/odd"
+            tal:attributes="class python:oddrow and 'portletItem even' or 'portletItem odd'">
+            <span class="text" tal:content="item/text">
+                Concert of Rihanna
+            </span>
+            <span class="start"
+                    tal:condition="python:view.data.show_start and item.get('start', '')"
+                    tal:content="python:toLocalizedTime(item['start'])">
+                2012-12-12
+            </span>
+            <span class="end"
+                    tal:condition="python:view.data.show_start and item.get('end', '')"
+                    tal:content="python:toLocalizedTime(item['end'])">
+                2012-12-12
+            </span>
+        </dd>
+    </tal:item>
+</dl>
