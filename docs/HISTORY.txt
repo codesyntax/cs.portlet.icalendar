@@ -4,6 +4,9 @@ Changelog
 1.0 (2012/09/03)
 --------------------
 
+- Add eu and es translations
+  [erral]
+
 - Rewrite of the caching mechanism, taking code 
   from collective.portlet.feedmixer
   [erral]
