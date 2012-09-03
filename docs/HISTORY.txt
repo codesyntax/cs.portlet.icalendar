@@ -4,6 +4,15 @@ Changelog
 1.0 (2012/09/03)
 --------------------
 
+- Fix start and end-date showing and show them always.
+  [erral]
+
+- Move start and end dates to local timezone
+  [erral]
+
+- Fix end-date discovery
+  [erral]
+
 - Add eu and es translations
   [erral]
 

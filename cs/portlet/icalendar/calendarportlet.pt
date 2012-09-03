@@ -10,20 +10,73 @@
     <tal:item repeat="item view/get_items"
               define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
         <dd tal:define="oddrow repeat/item/odd"
-            tal:attributes="class python:oddrow and 'portletItem even' or 'portletItem odd'">
-            <span class="text" tal:content="item/text">
+            tal:attributes="class python:oddrow and 'portletItem vevent even' or 'portletItem vevent odd'">
+            <span class="summary" tal:content="item/text">
                 Concert of Rihanna
             </span>
-            <span class="start"
-                    tal:condition="python:view.data.show_start and item.get('start', '')"
-                    tal:content="python:toLocalizedTime(item['start'])">
-                2012-12-12
+        
+          <span class="eventdetails"
+                i18n:domain="plone"
+                tal:define="item_start item/start|nothing;
+                            item_end item/end|nothing;
+                            item_sametime python:item_start == item_end;
+                            item_samedate python:(item_end - item_start &lt; 1);
+                            start_at_0 python:item_start.hour() == 0">            
+                      
+            <span tal:condition="item_sametime"
+                  i18n:translate="label_event_byline_onlyfrom">
+                 <abbr class="dtstart"
+                       tal:attributes="title python:item_start"
+                       tal:content="python:toLocalizedTime(item_start, long_format=not start_at_0)"
+                       i18n:name="start">from date</abbr>
             </span>
-            <span class="end"
-                    tal:condition="python:view.data.show_end and item.get('end', '')"
-                    tal:content="python:toLocalizedTime(item['end'])">
-                2012-12-12
+            <span tal:condition="python: item_samedate and not item_sametime and not start_at_0"
+                  i18n:translate="label_event_byline_samedate">
+                 <abbr class="dtstart"
+                       tal:attributes="title python:item_start"
+                       tal:content="python:toLocalizedTime(item_start)"
+                       i18n:name="start">from date</abbr> from
+                 <abbr class="dtstart"
+                       tal:attributes="title python:item_start"
+                       tal:content="python:toLocalizedTime(item_start,time_only=1)"
+                       i18n:name="starttime">from time</abbr> to
+                 <abbr class="dtend"
+                       tal:attributes="title python:item_end"
+                       tal:content="python:toLocalizedTime(item_end,time_only=1)"
+                       i18n:name="end">to time</abbr>
             </span>
+            <span tal:condition="python: item_samedate and not item_sametime and start_at_0">
+                 <abbr class="dtstart"
+                       tal:attributes="title python:item_start"
+                       tal:content="python:toLocalizedTime(item_start)"
+                       >from date</abbr> 
+            </span>
+
+            <span tal:condition="python: not item_samedate and not item_sametime and not start_at_0"
+                  i18n:translate="label_event_byline">
+                  from
+                       <abbr class="dtstart"
+                       tal:attributes="title python:item_start"
+                       tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                       i18n:name="start">from date</abbr> to
+                 <abbr class="dtend"
+                       tal:attributes="title python:item_end"
+                       tal:content="python:toLocalizedTime(item_end,long_format=1)"
+                       i18n:name="end">to date</abbr>
+            </span>
+            <span tal:condition="python: not item_samedate and not item_sametime and start_at_0"
+                  i18n:translate="label_event_byline">
+                  from
+                       <abbr class="dtstart"
+                       tal:attributes="title python:item_start"
+                       tal:content="python:toLocalizedTime(item_start,long_format=0)"
+                       i18n:name="start">from date</abbr> to
+                 <abbr class="dtend"
+                       tal:attributes="title python:item_end"
+                       tal:content="python:toLocalizedTime(item_end,long_format=0)"
+                       i18n:name="end">to date</abbr>
+            </span>
+          </span>            
         </dd>
     </tal:item>
 </dl>

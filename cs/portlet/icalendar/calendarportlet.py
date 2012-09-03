@@ -39,15 +39,15 @@ same.
                        required=True
                        )
 
-    show_start = schema.Bool(title=_(u'Show the start date of the event?'),
-                            required=False,
-                            default=True,
-                           )
+    # show_start = schema.Bool(title=_(u'Show the start date of the event?'),
+    #                         required=False,
+    #                         default=True,
+    #                        )
 
-    show_end = schema.Bool(title=_(u'Show the end date of the event?'),
-                           required=False,
-                           default=True,
-                           )
+    # show_end = schema.Bool(title=_(u'Show the end date of the event?'),
+    #                        required=False,
+    #                        default=True,
+    #                        )
 
     cache_time = schema.Int(title=_(u'Cache of the ICS data in seconds'),
                             required=True,
@@ -124,8 +124,10 @@ of this class. Other methods can be added and referenced in the template.
                     d['text'] = safe_unicode(item.get('SUMMARY', ''))
                     start = item.get('DTSTART', None)
                     d['start'] = start and dt2DT(start.dt) or ''
-                    end = item.get('DEND', None)
+                    end = item.get('DTEND', None)
                     d['end'] = end and dt2DT(end.dt) or ''
+                    d['start'] = d['start'].toZone(d['start'].localZone())
+                    d['end'] = d['end'].toZone(d['end'].localZone())
                     d['location'] = safe_unicode(item.get('LOCATION', ''))
                     d['subject'] = safe_unicode(item.get('CATEGORIES', ''))
                     res.append(d)
