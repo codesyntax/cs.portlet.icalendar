@@ -1,20 +1,21 @@
-from Products.CMFPlone.utils import safe_unicode
+import urllib2, time
+from icalendar import Calendar
+
+from zope import schema
+from zope.component import getUtility
+from zope.formlib import form
 from zope.interface import implements
+
+from Products.ATContentTypes.utils import dt2DT
+from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.app.portlets.portlets import base
-
-from zope import schema
-from zope.formlib import form
-
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.memoize.interfaces import ICacheChooser
 
 from cs.portlet.icalendar import icalendarMessageFactory as _
-from plone.memoize.ram import cache
 
-import urllib2
-from icalendar import Calendar
-from Products.ATContentTypes.utils import dt2DT
 
 class IICalendarPortlet(IPortletDataProvider):
     """A portlet
@@ -96,28 +97,40 @@ of this class. Other methods can be added and referenced in the template.
     def title(self):
         return self.data.portlet_title
 
-    def _render_cache_key(func, item):
-        return item.data.cache_time
-
-    @cache(_render_cache_key)
     def get_items(self):
-        try:
-            sock = urllib2.urlopen(self.data.url)
-        except:
-            return []
-        cal = Calendar.from_ical(sock.read())
-        res = []
-        for item in cal.walk():
-            if item.name == 'VEVENT':
-                d = {}
-                d['text'] = safe_unicode(item.get('SUMMARY', ''))
-                start = item.get('DTSTART', None)
-                d['start'] = start and dt2DT(start.dt) or ''
-                end = item.get('DEND', None)
-                d['end'] = end and dt2DT(end.dt) or ''
-                d['location'] = safe_unicode(item.get('LOCATION', ''))
-                d['subject'] = safe_unicode(item.get('CATEGORIES', ''))
-                res.append(d)
+        now = time.time()
+        url = self.data.url
+        chooser = getUtility(ICacheChooser)
+        cache = chooser('cs.portlet.icalendar')
+        cached_data = cache.get(url, None)
+        cache_timeout = int(self.data.cache_time)
+        retrieve_data = True
+        if cached_data is not None:
+            timestamp, feed = cached_data
+            if now - timestamp < cache_timeout:
+                res = feed
+                retrieve_data = False
+
+        if retrieve_data:
+            try:
+                sock = urllib2.urlopen(url)
+            except:
+                return []
+            cal = Calendar.from_ical(sock.read())
+            res = []
+            for item in cal.walk():
+                if item.name == 'VEVENT':
+                    d = {}
+                    d['text'] = safe_unicode(item.get('SUMMARY', ''))
+                    start = item.get('DTSTART', None)
+                    d['start'] = start and dt2DT(start.dt) or ''
+                    end = item.get('DEND', None)
+                    d['end'] = end and dt2DT(end.dt) or ''
+                    d['location'] = safe_unicode(item.get('LOCATION', ''))
+                    d['subject'] = safe_unicode(item.get('CATEGORIES', ''))
+                    res.append(d)
+
+            cache[url] = (now+cache_timeout, res)
 
         if not self.data.limit:
             return res

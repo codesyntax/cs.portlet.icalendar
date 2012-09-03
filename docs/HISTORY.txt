@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.0 (2012/09/03)
+--------------------
+
+- Rewrite of the caching mechanism, taking code 
+  from collective.portlet.feedmixer
+  [erral]
+
+
 1.0b1 (2012/08/03)
 -------------------
 
